@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Sku {
+  id           String   @id @default(cuid())
+  sku_code     String   @unique
+  product_name String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  renders      Render[]
+  events       Event[]
+  likes        Like[]
+
+  @@map("skus")
+}
+
+model Render {
+  id        String   @id @default(cuid())
+  sku_id    String
+  image_url String
+  alt_text  String?
+  is_active Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sku Sku @relation(fields: [sku_id], references: [id], onDelete: Cascade)
+
+  @@map("renders")
+}
+
+model Event {
+  id         String   @id @default(cuid())
+  sku_id     String
+  event_type String
+  session_id String
+  createdAt  DateTime @default(now())
+
+  sku Sku @relation(fields: [sku_id], references: [id], onDelete: Cascade)
+
+  @@map("events")
+}
+
+model Like {
+  id         String   @id @default(cuid())
+  sku_id     String
+  session_id String
+  createdAt  DateTime @default(now())
+
+  sku Sku @relation(fields: [sku_id], references: [id], onDelete: Cascade)
+
+  @@unique([sku_id, session_id])
+  @@map("likes")
+}

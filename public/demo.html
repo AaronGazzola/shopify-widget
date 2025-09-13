@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lifestyle Widget Demo</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .product-demo {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin: 40px 0;
+            align-items: start;
+        }
+
+        .product-info {
+            padding: 20px;
+            background: #fafafa;
+            border-radius: 8px;
+        }
+
+        .product-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .product-price {
+            font-size: 20px;
+            color: #e74c3c;
+            margin-bottom: 15px;
+        }
+
+        .product-description {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .sku-info {
+            background: #e8f4f8;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+
+        .widget-section {
+            background: #fff;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+        }
+
+        .widget-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+            text-align: center;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .demo-item {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+        }
+
+        .demo-header {
+            background: #f8f9fa;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .demo-content {
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .product-demo {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Lifestyle Widget Demo</h1>
+        <p style="text-align: center; color: #666; margin-bottom: 40px;">
+            This demo shows how the lifestyle widget integrates with different products and SKUs.
+        </p>
+
+        <!-- Featured Product Demo -->
+        <div class="product-demo">
+            <div class="product-info">
+                <div class="product-title">Premium Wireless Headphones</div>
+                <div class="product-price">$199.99</div>
+                <div class="product-description">
+                    Experience crystal-clear audio with our premium wireless headphones.
+                    Featuring active noise cancellation, 30-hour battery life, and comfortable over-ear design.
+                </div>
+                <div class="sku-info">
+                    <strong>SKU:</strong> ABC123
+                </div>
+            </div>
+
+            <div class="widget-section">
+                <div class="widget-title">✨ Style Inspiration</div>
+                <div id="lifestyle-widget-1" data-lifestyle-widget data-sku="ABC123"></div>
+            </div>
+        </div>
+
+        <!-- Multiple Widget Demos -->
+        <div class="demo-grid">
+            <div class="demo-item">
+                <div class="demo-header">
+                    <strong>Smart Fitness Watch</strong> - SKU: DEF456
+                </div>
+                <div class="demo-content">
+                    <div id="lifestyle-widget-2" data-lifestyle-widget data-sku="DEF456"></div>
+                </div>
+            </div>
+
+            <div class="demo-item">
+                <div class="demo-header">
+                    <strong>Organic Cotton T-Shirt</strong> - SKU: GHI789
+                </div>
+                <div class="demo-content">
+                    <div id="lifestyle-widget-3" data-lifestyle-widget data-sku="GHI789"></div>
+                </div>
+            </div>
+
+            <div class="demo-item">
+                <div class="demo-header">
+                    <strong>Minimalist Laptop Bag</strong> - SKU: JKL012
+                </div>
+                <div class="demo-content">
+                    <div id="lifestyle-widget-4" data-lifestyle-widget data-sku="JKL012"></div>
+                </div>
+            </div>
+
+            <div class="demo-item">
+                <div class="demo-header">
+                    <strong>Eco-Friendly Water Bottle</strong> - SKU: MNO345
+                </div>
+                <div class="demo-content">
+                    <div id="lifestyle-widget-5" data-lifestyle-widget data-sku="MNO345"></div>
+                </div>
+            </div>
+
+            <div class="demo-item">
+                <div class="demo-header">
+                    <strong>Auto-Detect SKU</strong> - Will use ABC123
+                </div>
+                <div class="demo-content">
+                    <div id="lifestyle-widget-auto" data-lifestyle-widget></div>
+                </div>
+            </div>
+
+            <div class="demo-item">
+                <div class="demo-header">
+                    <strong>Invalid SKU Test</strong> - Should show no images
+                </div>
+                <div class="demo-content">
+                    <div id="lifestyle-widget-invalid" data-lifestyle-widget data-sku="INVALID"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 40px;">
+            <h3 style="margin-top: 0;">📋 Testing Instructions</h3>
+            <ul>
+                <li>Each widget should load with 2 lifestyle images for valid SKUs</li>
+                <li>Click the heart icons to test like functionality</li>
+                <li>Like counts should increment and persist</li>
+                <li>Widgets should be responsive and work on mobile devices</li>
+                <li>Invalid SKUs should show "No lifestyle images available"</li>
+                <li>Check browser console for any errors</li>
+            </ul>
+
+            <h3>🛠️ Setup</h3>
+            <p>To use this demo:</p>
+            <ol>
+                <li>Deploy your application to Vercel</li>
+                <li>Update the script src below to your deployed URL</li>
+                <li>Ensure your database is seeded with sample data</li>
+                <li>Open this file in a browser</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- Widget Script - Update this URL to your deployed version -->
+    <script>
+        // Simulate Shopify environment for testing
+        window.ShopifyAnalytics = {
+            meta: {
+                product: {
+                    id: 123456789,
+                    handle: 'premium-wireless-headphones',
+                    variants: [{ sku: 'ABC123' }]
+                }
+            }
+        };
+    </script>
+
+    <!-- Replace this URL with your deployed Vercel URL -->
+    <script src="http://localhost:3000/widget.js" async></script>
+
+    <script>
+        // Add some debugging
+        window.addEventListener('load', function() {
+            console.log('Demo page loaded');
+            console.log('Widget containers found:', document.querySelectorAll('[data-lifestyle-widget]').length);
+        });
+
+        // Listen for widget messages
+        window.addEventListener('message', function(event) {
+            console.log('Widget message received:', event.data);
+        });
+    </script>
+</body>
+</html>

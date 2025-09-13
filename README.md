@@ -1,36 +1,242 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Shopify AI Lifestyle Widget
 
-## Getting Started
+A minimal demonstration of an AI-powered lifestyle widget for Shopify stores that showcases product images with interactive like functionality and analytics tracking.
 
-First, run the development server:
+## Features
 
+- **Lifestyle Widget**: Displays 2 lifestyle images per SKU in a responsive 2-column grid
+- **Interactive Likes**: Users can like images with persistent session-based tracking
+- **Event Tracking**: Captures view and like events for analytics
+- **Analytics Dashboard**: Performance metrics including views, likes, and CTR
+- **Shopify Integration**: Embeddable widget script that auto-detects product SKUs
+- **Real-time Updates**: Like counts update immediately across sessions
+
+## Tech Stack
+
+- **Next.js 15** with TypeScript and App Directory
+- **TailwindCSS v4** for styling
+- **Prisma ORM** for database queries and type safety
+- **Supabase** for database and authentication
+- **React Query** for state management and caching
+- **Zustand** for client-side state
+- **Vercel** for deployment
+
+## Quick Start
+
+### 1. Environment Setup
+
+Copy the environment template:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.example .env
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Fill in your Supabase credentials in `.env`:
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+DATABASE_URL=postgresql://user:password@host:port/database
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 2. Database Setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create and seed the database:
+```bash
+npm run db:push
+npm run db:seed
+```
 
-## Learn More
+### 3. Development
 
-To learn more about Next.js, take a look at the following resources:
+Start the development server:
+```bash
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Visit [http://localhost:3000](http://localhost:3000) to see the demo.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## API Endpoints
 
-## Deploy on Vercel
+### GET /api/renders?sku={sku}
+Fetch 2 lifestyle images for a given SKU.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Response:**
+```json
+[
+  {
+    "id": "render_id",
+    "image_url": "https://example.com/image.jpg",
+    "alt_text": "Product lifestyle image"
+  }
+]
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### POST /api/events
+Log user interaction events.
+
+**Request:**
+```json
+{
+  "sku_id": "sku_id",
+  "event_type": "view|like",
+  "session_id": "session_id"
+}
+```
+
+### POST /api/likes
+Toggle like status for a SKU.
+
+**Request:**
+```json
+{
+  "sku_id": "sku_id",
+  "session_id": "session_id"
+}
+```
+
+**Response:**
+```json
+{
+  "liked": true,
+  "total_likes": 5
+}
+```
+
+### GET /api/analytics?days={days}
+Get performance analytics for the specified time period.
+
+**Response:**
+```json
+{
+  "sku_performance": [
+    {
+      "sku": "ABC123",
+      "product_name": "Premium Headphones",
+      "views": 100,
+      "likes": 15,
+      "ctr": 15.00
+    }
+  ]
+}
+```
+
+## Components
+
+### LifestyleWidget
+The main widget component that displays lifestyle images with like functionality.
+
+```tsx
+import { LifestyleWidget } from '@/app/widget/LifestyleWidget'
+
+<LifestyleWidget sku="ABC123" />
+```
+
+## Shopify Integration
+
+### 1. Widget Script
+Include the widget script in your Shopify theme:
+
+```html
+<script src="https://your-domain.vercel.app/widget.js"></script>
+```
+
+### 2. Auto-detection
+The widget automatically detects the product SKU from:
+- URL path (`/products/product-handle`)
+- Meta tags (`product:retailer_item_id`)
+- JSON-LD structured data
+
+### 3. Manual Integration
+For custom integration, use:
+
+```javascript
+// Initialize on specific SKU
+LifestyleWidget.load('ABC123', 'widget-container-id');
+
+// Auto-detect and initialize
+LifestyleWidget.init();
+```
+
+## Database Schema
+
+The widget uses 4 main tables:
+
+- **skus**: Product information (sku_code, product_name)
+- **renders**: Lifestyle images (sku_id, image_url, is_active)
+- **events**: User interactions (sku_id, event_type, session_id)
+- **likes**: Like tracking (sku_id, session_id, unique constraint)
+
+## Deployment
+
+### Vercel Deployment
+
+1. Connect your repository to Vercel
+2. Set environment variables in Vercel dashboard
+3. Deploy with automatic builds on push
+
+### Environment Variables for Production
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_production_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_production_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_production_service_role_key
+DATABASE_URL=your_production_database_url
+NEXT_PUBLIC_APP_URL=https://your-domain.vercel.app
+```
+
+## Demo Pages
+
+- **Home** (`/`): Overview and setup instructions
+- **Widget Demo** (`/demo`): Test the widget with sample SKUs
+- **Analytics Dashboard** (`/dashboard`): View performance metrics
+
+## Development Commands
+
+```bash
+# Development
+npm run dev
+
+# Database
+npm run db:push      # Push schema to database
+npm run db:seed      # Seed sample data
+npm run db:studio    # Open Prisma Studio
+
+# Production
+npm run build
+npm run start
+```
+
+## Sample Data
+
+The seeder creates 5 sample products with lifestyle images:
+- Premium Wireless Headphones (ABC123)
+- Smart Fitness Watch (DEF456)
+- Organic Cotton T-Shirt (GHI789)
+- Minimalist Laptop Bag (JKL012)
+- Eco-Friendly Water Bottle (MNO345)
+
+## Success Criteria
+
+The demo successfully demonstrates:
+
+1. ✅ **Widget Integration**: Lifestyle images load correctly on product pages
+2. ✅ **User Interaction**: Like functionality works and persists across sessions
+3. ✅ **Data Flow**: Events are tracked and stored in database
+4. ✅ **Analytics**: Dashboard shows meaningful performance metrics
+5. ✅ **Scalability**: Architecture supports adding more SKUs and features
+
+## Architecture
+
+The widget follows a clean architecture pattern:
+
+```
+app/widget/
+├── widget.types.ts       # TypeScript interfaces
+├── widget.stores.ts      # Zustand state management
+├── widget.actions.ts     # Server actions
+├── widget.hooks.ts       # React Query hooks
+├── LifestyleWidget.tsx   # Main component
+└── HeartIcon.tsx         # Like button icon
+```
+
+This demonstrates modern React patterns with proper separation of concerns, type safety, and efficient state management suitable for production Shopify integrations.
