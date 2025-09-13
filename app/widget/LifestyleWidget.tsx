@@ -25,15 +25,17 @@ export const LifestyleWidget = ({ sku, className }: LifestyleWidgetProps) => {
   const handleLike = async (renderId: string) => {
     try {
       const result = await toggleLikeMutation.mutateAsync(renderId)
-      setLikes(prev => ({
-        ...prev,
-        [renderId]: {
-          liked: result.liked,
-          total: result.total_likes
-        }
-      }))
+      if (result) {
+        setLikes(prev => ({
+          ...prev,
+          [renderId]: {
+            liked: result.liked,
+            total: result.total_likes
+          }
+        }))
 
-      logEventMutation.mutate({ sku_id: renderId, event_type: 'like' })
+        logEventMutation.mutate({ sku_id: renderId, event_type: 'like' })
+      }
     } catch (error) {
       console.log(JSON.stringify({ error: 'Failed to toggle like' }))
     }

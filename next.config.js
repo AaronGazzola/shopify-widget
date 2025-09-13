@@ -30,9 +30,6 @@ const nextConfig = {
     ]
   },
 
-  experimental: {
-    outputFileTracingRoot: undefined,
-  },
 
   env: {
     NEXT_PUBLIC_APP_URL: process.env.VERCEL_URL
