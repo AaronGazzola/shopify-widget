@@ -23,63 +23,103 @@
       </div>
       <style>
         .lifestyle-widget-container {
-          max-width: 400px;
-          margin: 20px auto;
-          padding: 16px;
+          max-width: 400px !important;
+          margin: 20px auto !important;
+          padding: 16px !important;
+          box-sizing: border-box !important;
         }
         .lifestyle-widget-loading {
-          text-align: center;
-          color: #666;
-          padding: 40px 0;
+          text-align: center !important;
+          color: #666 !important;
+          padding: 40px 0 !important;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
         }
         .lifestyle-widget-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 16px;
+          display: grid !important;
+          grid-template-columns: 1fr 1fr !important;
+          gap: 16px !important;
+          width: 100% !important;
+          box-sizing: border-box !important;
         }
         .lifestyle-widget-item {
-          position: relative;
+          position: relative !important;
+          width: 100% !important;
+          box-sizing: border-box !important;
+          overflow: hidden !important;
+        }
+        .lifestyle-widget-item::before {
+          content: '' !important;
+          display: block !important;
+          padding-bottom: 100% !important;
         }
         .lifestyle-widget-item img {
-          width: 100%;
-          aspect-ratio: 1;
-          object-fit: cover;
-          border-radius: 8px;
+          position: absolute !important;
+          top: 0 !important;
+          left: 0 !important;
+          width: 100% !important;
+          height: 100% !important;
+          object-fit: cover !important;
+          border-radius: 8px !important;
+          display: block !important;
+          max-width: none !important;
+          box-sizing: border-box !important;
+        }
+        @supports (aspect-ratio: 1) {
+          .lifestyle-widget-item::before {
+            display: none !important;
+          }
+          .lifestyle-widget-item img {
+            position: static !important;
+            height: auto !important;
+            aspect-ratio: 1 !important;
+          }
         }
         .lifestyle-widget-like {
-          position: absolute;
-          top: 8px;
-          right: 8px;
-          background: rgba(255, 255, 255, 0.9);
-          backdrop-filter: blur(4px);
-          border-radius: 50%;
-          padding: 8px;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          gap: 4px;
+          position: absolute !important;
+          top: 8px !important;
+          right: 8px !important;
+          background: rgba(255, 255, 255, 0.9) !important;
+          backdrop-filter: blur(4px) !important;
+          border-radius: 50% !important;
+          padding: 8px !important;
+          cursor: pointer !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          gap: 4px !important;
+          border: none !important;
+          outline: none !important;
+          min-width: 36px !important;
+          min-height: 36px !important;
+          box-sizing: border-box !important;
         }
         .lifestyle-widget-heart {
-          width: 20px;
-          height: 20px;
+          width: 20px !important;
+          height: 20px !important;
+          flex-shrink: 0 !important;
+          display: block !important;
         }
         .lifestyle-widget-heart.filled {
-          color: #ef4444;
-          fill: currentColor;
+          color: #ef4444 !important;
+          fill: currentColor !important;
         }
         .lifestyle-widget-heart.outline {
-          color: #666;
-          fill: none;
+          color: #666 !important;
+          fill: none !important;
+          stroke: currentColor !important;
         }
         .lifestyle-widget-count {
-          font-size: 12px;
-          color: #666;
+          font-size: 12px !important;
+          color: #666 !important;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+          line-height: 1 !important;
         }
         .lifestyle-widget-error {
-          text-align: center;
-          color: #ef4444;
-          padding: 20px;
-          font-size: 14px;
+          text-align: center !important;
+          color: #ef4444 !important;
+          padding: 20px !important;
+          font-size: 14px !important;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
         }
       </style>
     `;
