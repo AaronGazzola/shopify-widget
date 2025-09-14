@@ -2,7 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { LifestyleWidget } from '@/app/widget/LifestyleWidget'
-import { getRendersAction, logEventAction, toggleLikeAction } from '@/app/widget/widget.actions'
+import { getRendersAction, logEventAction, toggleLikeAction, getLikeStatesAction } from '@/app/widget/widget.actions'
 import { getSessionId } from '@/lib/session.utils'
 
 jest.mock('@/app/widget/widget.actions')
@@ -11,6 +11,7 @@ jest.mock('@/lib/session.utils')
 const mockedGetRendersAction = getRendersAction as jest.MockedFunction<typeof getRendersAction>
 const mockedLogEventAction = logEventAction as jest.MockedFunction<typeof logEventAction>
 const mockedToggleLikeAction = toggleLikeAction as jest.MockedFunction<typeof toggleLikeAction>
+const mockedGetLikeStatesAction = getLikeStatesAction as jest.MockedFunction<typeof getLikeStatesAction>
 const mockedGetSessionId = getSessionId as jest.MockedFunction<typeof getSessionId>
 
 const mockRenderData = [
@@ -70,6 +71,10 @@ describe('Shopify Widget Integration Tests', () => {
         data: { success: true },
         error: null
       })
+      mockedGetLikeStatesAction.mockResolvedValue({
+        data: { render1: { liked: false, total: 0 }, render2: { liked: false, total: 0 } },
+        error: null
+      })
 
       renderWithProviders(<LifestyleWidget sku="ABC123" />)
 
@@ -88,6 +93,10 @@ describe('Shopify Widget Integration Tests', () => {
       })
       mockedLogEventAction.mockResolvedValue({
         data: { success: true },
+        error: null
+      })
+      mockedGetLikeStatesAction.mockResolvedValue({
+        data: { render1: { liked: false, total: 0 }, render2: { liked: false, total: 0 } },
         error: null
       })
 
@@ -113,6 +122,15 @@ describe('Shopify Widget Integration Tests', () => {
         data: { liked: true, total_likes: 5 },
         error: null
       })
+      mockedGetLikeStatesAction
+        .mockResolvedValueOnce({
+          data: { render1: { liked: false, total: 0 }, render2: { liked: false, total: 0 } },
+          error: null
+        })
+        .mockResolvedValueOnce({
+          data: { render1: { liked: true, total: 5 }, render2: { liked: false, total: 0 } },
+          error: null
+        })
 
       const user = userEvent.setup()
       renderWithProviders(<LifestyleWidget sku="ABC123" />)
@@ -144,6 +162,10 @@ describe('Shopify Widget Integration Tests', () => {
       })
       mockedLogEventAction.mockResolvedValue({
         data: { success: true },
+        error: null
+      })
+      mockedGetLikeStatesAction.mockResolvedValue({
+        data: { render1: { liked: false, total: 0 }, render2: { liked: false, total: 0 } },
         error: null
       })
 
@@ -200,6 +222,10 @@ describe('Shopify Widget Integration Tests', () => {
         data: { success: true },
         error: null
       })
+      mockedGetLikeStatesAction.mockResolvedValue({
+        data: { render1: { liked: false, total: 0 }, render2: { liked: false, total: 0 } },
+        error: null
+      })
 
       renderWithProviders(<LifestyleWidget sku="ABC123" />)
 
@@ -216,6 +242,10 @@ describe('Shopify Widget Integration Tests', () => {
       })
       mockedLogEventAction.mockResolvedValue({
         data: { success: true },
+        error: null
+      })
+      mockedGetLikeStatesAction.mockResolvedValue({
+        data: { render1: { liked: false, total: 0 }, render2: { liked: false, total: 0 } },
         error: null
       })
 

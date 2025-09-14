@@ -2,32 +2,39 @@
 
 import { LifestyleWidget } from "@/app/widget/LifestyleWidget"
 import Link from "next/link"
+import { cn } from "@/lib/shadcn.utils"
 
 export default function DemoPage() {
-  const sampleSkus = ["ABC123", "DEF456", "GHI789"]
+  const sampleSkus = ["ABC123", "DEF456", "JKL012"]
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="text-center mb-12">
+    <div className="min-h-screen bg-zinc-50">
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-medium text-zinc-900 mb-2">
+              Widget Demo
+            </h1>
+            <p className="text-zinc-600">
+              Test the lifestyle widget with sample SKUs
+            </p>
+          </div>
           <Link
             href="/"
-            className="inline-block text-blue-600 hover:text-blue-800 mb-4"
+            className={cn(
+              "inline-flex items-center px-4 py-2 text-sm font-medium",
+              "text-zinc-700 bg-white border border-zinc-300 rounded-md",
+              "hover:bg-zinc-50 transition-colors"
+            )}
           >
-            ← Back to Home
+            ← Back to Dashboard
           </Link>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Widget Demo
-          </h1>
-          <p className="text-lg text-gray-600">
-            Test the lifestyle widget with sample SKUs
-          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {sampleSkus.map((sku) => (
-            <div key={sku} className="bg-white rounded-lg shadow-md p-6">
-              <h3 className="text-lg font-semibold mb-4 text-center">
+            <div key={sku} className="bg-white rounded-lg border border-zinc-200 p-6">
+              <h3 className="text-lg font-medium text-zinc-900 mb-4 text-center">
                 Product SKU: {sku}
               </h3>
               <LifestyleWidget sku={sku} />
@@ -35,14 +42,14 @@ export default function DemoPage() {
           ))}
         </div>
 
-        <div className="mt-12 bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4">How it works</h2>
-          <ul className="list-disc list-inside space-y-2 text-gray-700">
-            <li>Each widget fetches 2 lifestyle images for the given SKU</li>
-            <li>Users can like images with the heart icon</li>
-            <li>Like counts are displayed and persist across sessions</li>
-            <li>View and like events are tracked in the database</li>
-            <li>Images are displayed in a responsive 2-column grid</li>
+        <div className="bg-white rounded-lg border border-zinc-200 p-6">
+          <h2 className="text-lg font-medium text-zinc-900 mb-4">How it works</h2>
+          <ul className="space-y-2 text-sm text-zinc-600">
+            <li><span className="font-medium text-zinc-900">•</span> Each widget fetches 2 lifestyle images for the given SKU</li>
+            <li><span className="font-medium text-zinc-900">•</span> Users can like images with the heart icon</li>
+            <li><span className="font-medium text-zinc-900">•</span> Like counts are displayed and persist across sessions</li>
+            <li><span className="font-medium text-zinc-900">•</span> View and like events are tracked in the database</li>
+            <li><span className="font-medium text-zinc-900">•</span> Images are displayed in a responsive 2-column grid</li>
           </ul>
         </div>
       </div>

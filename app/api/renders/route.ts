@@ -2,6 +2,12 @@ import { prisma } from '@/lib/prisma'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
+  const response = NextResponse.next()
+
+  response.headers.set('Access-Control-Allow-Origin', '*')
+  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+  response.headers.set('Access-Control-Allow-Headers', 'Content-Type')
+
   try {
     const { searchParams } = new URL(request.url)
     const sku = searchParams.get('sku')
@@ -31,9 +37,28 @@ export async function GET(request: NextRequest) {
       alt_text: render.alt_text || `${skuRecord.product_name} lifestyle image`
     }))
 
-    return NextResponse.json(renders)
+    const jsonResponse = NextResponse.json(renders)
+    jsonResponse.headers.set('Access-Control-Allow-Origin', '*')
+    jsonResponse.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+    jsonResponse.headers.set('Access-Control-Allow-Headers', 'Content-Type')
+    return jsonResponse
   } catch (error) {
     console.log(JSON.stringify({ error: 'Failed to fetch renders' }))
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    const errorResponse = NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    errorResponse.headers.set('Access-Control-Allow-Origin', '*')
+    errorResponse.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+    errorResponse.headers.set('Access-Control-Allow-Headers', 'Content-Type')
+    return errorResponse
   }
+}
+
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+  })
 }

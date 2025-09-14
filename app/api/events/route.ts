@@ -28,9 +28,28 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    return NextResponse.json({ success: true, event_id: event.id })
+    const jsonResponse = NextResponse.json({ success: true, event_id: event.id })
+    jsonResponse.headers.set('Access-Control-Allow-Origin', '*')
+    jsonResponse.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+    jsonResponse.headers.set('Access-Control-Allow-Headers', 'Content-Type')
+    return jsonResponse
   } catch (error) {
     console.log(JSON.stringify({ error: 'Failed to create event' }))
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    const errorResponse = NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    errorResponse.headers.set('Access-Control-Allow-Origin', '*')
+    errorResponse.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+    errorResponse.headers.set('Access-Control-Allow-Headers', 'Content-Type')
+    return errorResponse
   }
+}
+
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+  })
 }

@@ -1,7 +1,20 @@
 (function() {
   'use strict';
 
-  const WIDGET_API_BASE = 'https://shopify-widget.vercel.app';
+  function getApiBaseUrl() {
+    const widgetElement = document.querySelector('[data-lifestyle-widget]');
+    if (widgetElement && widgetElement.dataset.apiUrl) {
+      return widgetElement.dataset.apiUrl;
+    }
+
+    if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+      return 'http://localhost:3000';
+    }
+
+    return 'https://shopify-widget.vercel.app';
+  }
+
+  const WIDGET_API_BASE = getApiBaseUrl();
 
   function createWidgetHTML(sku) {
     return `
@@ -201,36 +214,95 @@
   }
 
   function detectSKU() {
-    const pathSegments = window.location.pathname.split('/');
-    if (pathSegments.includes('products') && pathSegments.length > 2) {
-      return pathSegments[pathSegments.indexOf('products') + 1];
+    const widgetElement = document.querySelector('[data-lifestyle-widget]');
+    if (widgetElement && widgetElement.dataset.sku) {
+      console.log('SKU found in data attribute:', widgetElement.dataset.sku);
+      return widgetElement.dataset.sku;
     }
 
-    const metaProduct = document.querySelector('meta[property="product:retailer_item_id"]');
+    const pathSegments = window.location.pathname.split('/');
+    if (pathSegments.includes('products') && pathSegments.length > 2) {
+      const productSku = pathSegments[pathSegments.indexOf('products') + 1];
+      console.log('SKU found in URL path:', productSku);
+      return productSku;
+    }
+
+    const currentVariantScript = document.querySelector('script:not([type]):not([src])');
+    if (currentVariantScript) {
+      try {
+        const scriptContent = currentVariantScript.textContent;
+        const skuMatch = scriptContent.match(/["']sku["']:\s*["']([^"']+)["']/);
+        if (skuMatch) {
+          console.log('SKU found in script content:', skuMatch[1]);
+          return skuMatch[1];
+        }
+
+        const variantMatch = scriptContent.match(/product\.variants\[0\]\.sku\s*=\s*["']([^"']+)["']/);
+        if (variantMatch) {
+          console.log('SKU found in variant script:', variantMatch[1]);
+          return variantMatch[1];
+        }
+      } catch (e) {}
+    }
+
+    const metaProduct = document.querySelector('meta[property="product:retailer_item_id"], meta[property="og:product:retailer_item_id"]');
     if (metaProduct) {
       return metaProduct.getAttribute('content');
     }
 
-    const jsonLD = document.querySelector('script[type="application/ld+json"]');
-    if (jsonLD) {
+    const skuInput = document.querySelector('input[name="id"], select[name="id"]');
+    if (skuInput && skuInput.value) {
+      return skuInput.value;
+    }
+
+    const jsonLDs = document.querySelectorAll('script[type="application/ld+json"]');
+    for (const jsonLD of jsonLDs) {
       try {
         const data = JSON.parse(jsonLD.textContent);
         if (data.sku) return data.sku;
         if (data.productID) return data.productID;
+        if (data.offers && data.offers.sku) return data.offers.sku;
       } catch (e) {}
     }
 
+    const shopifyDataElement = document.querySelector('[data-product-handle], [data-product-id]');
+    if (shopifyDataElement) {
+      const detectedSku = shopifyDataElement.dataset.productHandle || shopifyDataElement.dataset.productId;
+      console.log('SKU found in Shopify data element:', detectedSku);
+      return detectedSku;
+    }
+
+    console.warn('No SKU could be detected from any source');
     return null;
   }
 
   function initWidget() {
+    const existingWidget = document.querySelector('[data-lifestyle-widget]');
+    if (existingWidget) {
+      const sku = existingWidget.dataset.sku || detectSKU();
+      console.log('Widget found, SKU detected:', sku);
+
+      if (!sku) {
+        console.warn('Could not detect SKU for lifestyle widget');
+        existingWidget.innerHTML = '<div class="lifestyle-widget-error">SKU not found</div>';
+        return;
+      }
+
+      const containerId = existingWidget.id || `lifestyle-widget-${sku}`;
+      existingWidget.id = containerId;
+      existingWidget.innerHTML = createWidgetHTML(sku);
+      console.log('Loading widget for SKU:', sku, 'API Base:', WIDGET_API_BASE);
+      loadWidget(sku, containerId);
+      return;
+    }
+
     const sku = detectSKU();
     if (!sku) {
       console.warn('Could not detect SKU for lifestyle widget');
       return;
     }
 
-    const targetElement = document.querySelector('.product-single__description, .product__description, .product-form');
+    const targetElement = document.querySelector('.product-single__description, .product__description, .product-form, .product-details, .product__content');
     if (!targetElement) {
       console.warn('Could not find suitable element to insert lifestyle widget');
       return;
@@ -239,6 +311,8 @@
     const widgetContainer = document.createElement('div');
     const containerId = `lifestyle-widget-${sku}`;
     widgetContainer.id = containerId;
+    widgetContainer.setAttribute('data-lifestyle-widget', '');
+    widgetContainer.setAttribute('data-sku', sku);
     widgetContainer.innerHTML = createWidgetHTML(sku);
 
     targetElement.appendChild(widgetContainer);

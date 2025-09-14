@@ -66,3 +66,21 @@ export const toggleLikeAction = async (
     return getActionResponse({ error })
   }
 }
+
+export const getLikeStatesAction = async (
+  sku_ids: string[],
+  session_id: string
+): Promise<ActionResponse<Record<string, { liked: boolean; total: number }>>> => {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/likes?sku_ids=${sku_ids.join(',')}&session_id=${session_id}`)
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch like states')
+    }
+
+    const data = await response.json()
+    return getActionResponse({ data })
+  } catch (error) {
+    return getActionResponse({ error })
+  }
+}

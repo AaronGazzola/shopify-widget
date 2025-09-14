@@ -2,23 +2,25 @@
 
 import { useEffect, useState } from 'react'
 import { cn } from '@/lib/shadcn.utils'
-import { useGetRenders, useLogEvent, useToggleLike } from './widget.hooks'
+import { useGetRenders, useLogEvent, useToggleLike, useGetLikeStates } from './widget.hooks'
 import { useWidgetStore } from './widget.stores'
 import { LifestyleWidgetProps } from './widget.types'
 import { HeartIcon } from './HeartIcon'
 import { getSessionId } from '@/lib/session.utils'
 
 export const LifestyleWidget = ({ sku, className }: LifestyleWidgetProps) => {
-  const { renders, isLoading, error } = useWidgetStore()
-  const [likes, setLikes] = useState<Record<string, { liked: boolean; total: number }>>({})
+  const { isLoading, error } = useWidgetStore()
 
   const { data: rendersData } = useGetRenders(sku)
+  const skuIds = rendersData?.map(render => render.id) || []
+  const { data: likeStates = {} } = useGetLikeStates(skuIds)
   const logEventMutation = useLogEvent()
   const toggleLikeMutation = useToggleLike()
 
   useEffect(() => {
     if (rendersData?.length) {
-      logEventMutation.mutate({ sku_id: rendersData[0].id, event_type: 'view' })
+      const firstSkuId = rendersData[0].id
+      logEventMutation.mutate({ sku_id: firstSkuId, event_type: 'view' })
     }
   }, [rendersData])
 
@@ -26,19 +28,15 @@ export const LifestyleWidget = ({ sku, className }: LifestyleWidgetProps) => {
     try {
       const result = await toggleLikeMutation.mutateAsync(renderId)
       if (result) {
-        setLikes(prev => ({
-          ...prev,
-          [renderId]: {
-            liked: result.liked,
-            total: result.total_likes
-          }
-        }))
-
         logEventMutation.mutate({ sku_id: renderId, event_type: 'like' })
       }
     } catch (error) {
       console.log(JSON.stringify({ error: 'Failed to toggle like' }))
     }
+  }
+
+  const handleImageClick = (renderId: string) => {
+    logEventMutation.mutate({ sku_id: renderId, event_type: 'click' })
   }
 
   if (isLoading) {
@@ -63,7 +61,7 @@ export const LifestyleWidget = ({ sku, className }: LifestyleWidgetProps) => {
     )
   }
 
-  if (!renders.length) {
+  if (!rendersData?.length) {
     return (
       <div className={cn("w-full max-w-md mx-auto p-4", className)}>
         <div className="text-center text-gray-500 text-sm">
@@ -76,26 +74,27 @@ export const LifestyleWidget = ({ sku, className }: LifestyleWidgetProps) => {
   return (
     <div className={cn("w-full max-w-md mx-auto p-4", className)}>
       <div className="grid grid-cols-2 gap-4" data-testid="widget-grid">
-        {renders.map((render) => (
+        {rendersData.map((render) => (
           <div key={render.id} className="relative group">
             <img
               src={render.image_url}
               alt={render.alt_text}
-              className="w-full aspect-square object-cover rounded-lg"
+              className="w-full aspect-square object-cover rounded-lg cursor-pointer"
               loading="lazy"
+              onClick={() => handleImageClick(render.id)}
             />
             <div className="absolute top-2 right-2 bg-white/80 backdrop-blur-sm rounded-full p-2">
               <div className="flex items-center gap-1">
                 <HeartIcon
-                  filled={likes[render.id]?.liked || false}
+                  filled={likeStates[render.id]?.liked || false}
                   className={cn(
                     "w-5 h-5",
-                    likes[render.id]?.liked ? "text-red-500" : "text-gray-600 hover:text-red-500"
+                    likeStates[render.id]?.liked ? "text-red-500" : "text-gray-600 hover:text-red-500"
                   )}
                   onClick={() => handleLike(render.id)}
                 />
                 <span className="text-xs text-gray-600">
-                  {likes[render.id]?.total || 0}
+                  {likeStates[render.id]?.total || 0}
                 </span>
               </div>
             </div>

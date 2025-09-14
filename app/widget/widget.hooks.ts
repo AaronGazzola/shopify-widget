@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useWidgetStore } from './widget.stores'
-import { getRendersAction, logEventAction, toggleLikeAction } from './widget.actions'
+import { getRendersAction, logEventAction, toggleLikeAction, getLikeStatesAction } from './widget.actions'
 import { getSessionId } from '@/lib/session.utils'
 
 export const useGetRenders = (sku: string) => {
@@ -55,7 +55,24 @@ export const useToggleLike = () => {
       return data
     },
     onSuccess: (data, sku_id) => {
-      queryClient.invalidateQueries({ queryKey: ['likes', sku_id] })
+      queryClient.invalidateQueries({ queryKey: ['like-states'] })
     }
+  })
+}
+
+export const useGetLikeStates = (sku_ids: string[]) => {
+  return useQuery({
+    queryKey: ['like-states', sku_ids.join(',')],
+    queryFn: async () => {
+      if (sku_ids.length === 0) return {}
+
+      const session_id = getSessionId()
+      const { data, error } = await getLikeStatesAction(sku_ids, session_id)
+
+      if (error) throw new Error(error)
+      return data || {}
+    },
+    enabled: sku_ids.length > 0,
+    staleTime: 1000 * 30
   })
 }

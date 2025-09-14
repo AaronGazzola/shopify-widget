@@ -5,11 +5,13 @@
 ### 1. Create Development Store
 
 1. **Sign up for Shopify Partners Account** (free):
+
    - Go to https://partners.shopify.com
    - Create account or login
    - Navigate to "Stores" in your partner dashboard
 
 2. **Create Development Store**:
+
    - Click "Add store" → "Create development store"
    - Store name: `lifestyle-widget-demo`
    - Store type: "Development store"
@@ -29,53 +31,13 @@ Add these test products that match your seeded SKUs:
 4. **Minimalist Laptop Bag** (SKU: JKL012)
 5. **Eco-Friendly Water Bottle** (SKU: MNO345)
 
-### 3. Install Widget in Theme
-
-#### Method 1: Theme Code Integration
-
-1. **Access Theme Editor**:
-   - Go to Online Store → Themes
-   - Click "Actions" → "Edit code" on your active theme
-
-2. **Add Widget Container** in product template:
-   - Open `sections/product-form.liquid` or `templates/product.liquid`
-   - Add this code where you want the widget to appear:
-
-```liquid
-<!-- Lifestyle Widget -->
-<div class="lifestyle-widget-container">
-  <h3>Style It Your Way</h3>
-  <div id="lifestyle-widget" data-lifestyle-widget data-sku="{{ product.variants.first.sku }}"></div>
-</div>
-
-<!-- Widget Script -->
-<script src="https://your-domain.vercel.app/widget.js" async></script>
-
-<style>
-.lifestyle-widget-container {
-  margin: 2rem 0;
-  padding: 1.5rem;
-  border: 1px solid #e5e5e5;
-  border-radius: 8px;
-  background: #fafafa;
-}
-
-.lifestyle-widget-container h3 {
-  margin: 0 0 1rem 0;
-  font-size: 1.25rem;
-  color: #333;
-}
-</style>
-```
-
-#### Method 2: Using Shopify App Blocks (Recommended)
+### 3. Install Widget in Theme using Shopify App Blocks
 
 Create a custom section for the widget:
 
-1. **Create New Section**:
-   - In theme editor, create new file: `sections/lifestyle-widget.liquid`
+- Add a liquid code section to the page
+- Pase the code below:
 
-2. **Section Code**:
 ```liquid
 <div class="lifestyle-widget-section">
   {% if section.settings.show_heading %}
@@ -86,10 +48,36 @@ Create a custom section for the widget:
     id="lifestyle-widget-{{ section.id }}"
     data-lifestyle-widget
     data-sku="{{ product.variants.first.sku | default: section.settings.fallback_sku }}"
-  ></div>
+    data-api-url="{{ section.settings.api_url | default: 'https://shopify-widget.vercel.app' }}"
+  >
+    <div class="lifestyle-widget-container">
+      <div class="lifestyle-widget-loading">Loading lifestyle images...</div>
+    </div>
+  </div>
 </div>
 
-<script src="{{ section.settings.widget_url | default: 'https://your-domain.vercel.app/widget.js' }}" async></script>
+<script>
+  // Initialize widget when DOM is ready
+  document.addEventListener('DOMContentLoaded', function() {
+    const script = document.createElement('script');
+    script.src = '{{ section.settings.widget_url | default: "https://shopify-widget.vercel.app/widget.js" }}';
+    script.async = true;
+    script.onload = function() {
+      console.log('Widget script loaded successfully');
+      if (window.LifestyleWidget) {
+        window.LifestyleWidget.init();
+      }
+    };
+    script.onerror = function() {
+      console.error('Failed to load widget script');
+      const widget = document.querySelector('[data-lifestyle-widget]');
+      if (widget) {
+        widget.innerHTML = '<div class="lifestyle-widget-error">Failed to load widget</div>';
+      }
+    };
+    document.head.appendChild(script);
+  });
+</script>
 
 <style>
 .lifestyle-widget-section {
@@ -102,6 +90,25 @@ Create a custom section for the widget:
   margin-bottom: 1.5rem;
   font-size: {{ section.settings.heading_size }}px;
   color: {{ section.settings.heading_color }};
+}
+
+.lifestyle-widget-container {
+  max-width: 400px;
+  margin: 20px auto;
+  padding: 16px;
+}
+
+.lifestyle-widget-loading {
+  text-align: center;
+  color: #666;
+  padding: 40px 0;
+}
+
+.lifestyle-widget-error {
+  text-align: center;
+  color: #ef4444;
+  padding: 20px;
+  font-size: 14px;
 }
 </style>
 
@@ -144,6 +151,12 @@ Create a custom section for the widget:
       "id": "widget_url",
       "label": "Widget script URL",
       "info": "URL to your deployed widget script"
+    },
+    {
+      "type": "url",
+      "id": "api_url",
+      "label": "Widget API URL",
+      "info": "Base URL for widget API calls"
     },
     {
       "type": "text",
@@ -192,56 +205,3 @@ Create a custom section for the widget:
 }
 {% endschema %}
 ```
-
-3. **Add Section to Product Template**:
-   - Edit your product template
-   - Add the section where desired
-
-### 4. Testing Checklist
-
-- [ ] Widget loads on product pages
-- [ ] Images display correctly
-- [ ] Like buttons are functional
-- [ ] Events are being logged
-- [ ] SKU detection works correctly
-- [ ] Widget works on different devices
-- [ ] Widget works with different themes
-
-### 5. Common Issues & Solutions
-
-**Widget doesn't load:**
-- Check console for JavaScript errors
-- Verify widget script URL is correct
-- Ensure CORS headers are properly configured
-
-**Images don't appear:**
-- Verify SKU matches seeded data
-- Check database connection
-- Verify API endpoints are responding
-
-**SKU detection fails:**
-- Add manual SKU using `data-sku` attribute
-- Check Shopify product variant SKU field
-- Use fallback SKU in section settings
-
-### 6. Going Live
-
-1. **Custom Domain**: Set up custom domain for production
-2. **SSL Certificate**: Ensure HTTPS is enabled
-3. **Performance**: Monitor widget load times
-4. **Analytics**: Set up tracking for widget interactions
-
-## Demo Store Credentials
-
-After creating your development store, you can access it at:
-- **Store URL**: `https://lifestyle-widget-demo.myshopify.com`
-- **Admin URL**: `https://lifestyle-widget-demo.myshopify.com/admin`
-- **Use your Shopify Partners credentials to login**
-
-## Support
-
-For integration issues:
-1. Check browser console for errors
-2. Verify environment variables in Vercel
-3. Test widget functionality on the demo page first
-4. Ensure database is properly seeded

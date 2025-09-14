@@ -9,7 +9,7 @@
   - `renders` (id, sku_id, image_url, is_active)
   - `events` (id, sku_id, event_type, session_id, created_at)
   - `likes` (id, sku_id, session_id, created_at, unique constraint)
-- [ ] Insert sample data for 3-5 test SKUs with 2 renders each _(Need to run: `npm run db:push && npm run db:seed`)_
+- [x] Insert sample data for 3-5 test SKUs with 2 renders each
 
 ### Next.js Project Setup
 
@@ -105,13 +105,13 @@
 
 ### Integration Test
 
-- [ ] Create single comprehensive test file that verifies:
+- [x] Create single comprehensive test file that verifies:
   - Widget loads with valid SKU
   - Images display correctly from database
   - Like button functions and persists across sessions
   - Events are logged to database
   - Dashboard displays aggregated data correctly
-  - Widget works when embedded in mock Shopify product page
+  - Widget works when embedded in Shopify product page
 
 ### Test Data
 
@@ -130,16 +130,16 @@
 ### Shopify Demo Store
 
 - [x] Create test Shopify store or use existing
-- [ ] Install widget on product page via theme customization
-- [ ] Verify widget functionality in live Shopify environment
+- [x] Install widget on product page via theme customization
+- [x] Verify widget functionality in live Shopify environment
 
 ## Demo Deliverables
 
 ### Live Demo
 
-- [ ] Working Shopify store with widget installed
-- [ ] Functional dashboard with real interaction data
-- [ ] All APIs responding correctly
+- [x] Working Shopify store with widget installed
+- [x] Functional dashboard with real interaction data
+- [x] All APIs responding correctly
 
 ### Code Repository
 
@@ -148,23 +148,12 @@
 - [x] Environment variable template (`.env.example`)
 - [x] Database scripts and seeder (`npm run db:push`, `npm run db:seed`)
 
-## Key Dependencies
-
-```bash
-# Essential only
-npm install @supabase/supabase-js next react react-dom typescript
-npm install @types/react @types/node uuid
-npm install --save-dev jest @testing-library/react
-```
-
 ## Success Criteria
 
 The demo successfully demonstrates:
 
-1. **Widget Integration**: Lifestyle images load correctly on Shopify product pages
+1. **Widget Integration**: Images load correctly on Shopify product pages
 2. **User Interaction**: Like functionality works and persists across sessions
 3. **Data Flow**: Events are tracked and stored in database
 4. **Analytics**: Dashboard shows meaningful performance metrics
 5. **Scalability**: Architecture supports adding more SKUs and features
-
-This minimal version proves the core concept while remaining lightweight enough to build quickly for demo purposes.

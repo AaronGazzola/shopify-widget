@@ -26,11 +26,13 @@ A minimal demonstration of an AI-powered lifestyle widget for Shopify stores tha
 ### 1. Environment Setup
 
 Copy the environment template:
+
 ```bash
 cp .env.example .env
 ```
 
 Fill in your Supabase credentials in `.env`:
+
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
@@ -41,6 +43,7 @@ DATABASE_URL=postgresql://user:password@host:port/database
 ### 2. Database Setup
 
 Create and seed the database:
+
 ```bash
 npm run db:push
 npm run db:seed
@@ -49,6 +52,7 @@ npm run db:seed
 ### 3. Development
 
 Start the development server:
+
 ```bash
 npm run dev
 ```
@@ -58,9 +62,11 @@ Visit [http://localhost:3000](http://localhost:3000) to see the demo.
 ## API Endpoints
 
 ### GET /api/renders?sku={sku}
+
 Fetch 2 lifestyle images for a given SKU.
 
 **Response:**
+
 ```json
 [
   {
@@ -72,9 +78,11 @@ Fetch 2 lifestyle images for a given SKU.
 ```
 
 ### POST /api/events
+
 Log user interaction events.
 
 **Request:**
+
 ```json
 {
   "sku_id": "sku_id",
@@ -84,9 +92,11 @@ Log user interaction events.
 ```
 
 ### POST /api/likes
+
 Toggle like status for a SKU.
 
 **Request:**
+
 ```json
 {
   "sku_id": "sku_id",
@@ -95,6 +105,7 @@ Toggle like status for a SKU.
 ```
 
 **Response:**
+
 ```json
 {
   "liked": true,
@@ -103,9 +114,11 @@ Toggle like status for a SKU.
 ```
 
 ### GET /api/analytics?days={days}
+
 Get performance analytics for the specified time period.
 
 **Response:**
+
 ```json
 {
   "sku_performance": [
@@ -114,7 +127,7 @@ Get performance analytics for the specified time period.
       "product_name": "Premium Headphones",
       "views": 100,
       "likes": 15,
-      "ctr": 15.00
+      "ctr": 15.0
     }
   ]
 }
@@ -123,17 +136,19 @@ Get performance analytics for the specified time period.
 ## Components
 
 ### LifestyleWidget
+
 The main widget component that displays lifestyle images with like functionality.
 
 ```tsx
-import { LifestyleWidget } from '@/app/widget/LifestyleWidget'
+import { LifestyleWidget } from "@/app/widget/LifestyleWidget";
 
-<LifestyleWidget sku="ABC123" />
+<LifestyleWidget sku="ABC123" />;
 ```
 
 ## Shopify Integration
 
 ### 1. Widget Script
+
 Include the widget script in your Shopify theme:
 
 ```html
@@ -141,17 +156,20 @@ Include the widget script in your Shopify theme:
 ```
 
 ### 2. Auto-detection
+
 The widget automatically detects the product SKU from:
+
 - URL path (`/products/product-handle`)
 - Meta tags (`product:retailer_item_id`)
 - JSON-LD structured data
 
 ### 3. Manual Integration
+
 For custom integration, use:
 
 ```javascript
 // Initialize on specific SKU
-LifestyleWidget.load('ABC123', 'widget-container-id');
+LifestyleWidget.load("ABC123", "widget-container-id");
 
 // Auto-detect and initialize
 LifestyleWidget.init();
@@ -186,9 +204,8 @@ NEXT_PUBLIC_APP_URL=https://your-domain.vercel.app
 
 ## Demo Pages
 
-- **Home** (`/`): Overview and setup instructions
+- **Analytics Dashboard** (`/`): View performance metrics
 - **Widget Demo** (`/demo`): Test the widget with sample SKUs
-- **Analytics Dashboard** (`/dashboard`): View performance metrics
 
 ## Development Commands
 
@@ -209,6 +226,7 @@ npm run start
 ## Sample Data
 
 The seeder creates 5 sample products with lifestyle images:
+
 - Premium Wireless Headphones (ABC123)
 - Smart Fitness Watch (DEF456)
 - Organic Cotton T-Shirt (GHI789)
@@ -224,19 +242,3 @@ The demo successfully demonstrates:
 3. ✅ **Data Flow**: Events are tracked and stored in database
 4. ✅ **Analytics**: Dashboard shows meaningful performance metrics
 5. ✅ **Scalability**: Architecture supports adding more SKUs and features
-
-## Architecture
-
-The widget follows a clean architecture pattern:
-
-```
-app/widget/
-├── widget.types.ts       # TypeScript interfaces
-├── widget.stores.ts      # Zustand state management
-├── widget.actions.ts     # Server actions
-├── widget.hooks.ts       # React Query hooks
-├── LifestyleWidget.tsx   # Main component
-└── HeartIcon.tsx         # Like button icon
-```
-
-This demonstrates modern React patterns with proper separation of concerns, type safety, and efficient state management suitable for production Shopify integrations.
