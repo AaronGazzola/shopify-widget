@@ -33,6 +33,7 @@ export async function GET(request: NextRequest) {
 
     const renders = skuRecord.renders.map(render => ({
       id: render.id,
+      sku_id: skuRecord.id,
       image_url: render.image_url,
       alt_text: render.alt_text || `${skuRecord.product_name} lifestyle image`
     }))

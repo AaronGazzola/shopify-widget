@@ -1,0 +1,62 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - heading "Widget Demo" [level=1] [ref=e6]
+        - paragraph [ref=e7]: Experience the lifestyle widget with sample products
+      - link "Back to Dashboard" [ref=e8] [cursor=pointer]:
+        - /url: /
+    - generic [ref=e9]:
+      - heading "About This Demo" [level=2] [ref=e10]
+      - paragraph [ref=e11]: This demonstration shows how the lifestyle widget integrates with different products. Each widget displays lifestyle images related to the specific product SKU.
+    - generic [ref=e12]:
+      - generic [ref=e13]:
+        - generic [ref=e14]:
+          - heading "Premium Wireless Headphones" [level=3] [ref=e15]
+          - paragraph [ref=e16]: High-quality audio with noise cancellation
+          - paragraph [ref=e17]: "SKU: ABC123"
+        - generic [ref=e20]:
+          - generic [ref=e21]:
+            - img "Premium Wireless Headphones lifestyle shot 2" [ref=e22]
+            - img [ref=e24] [cursor=pointer]
+          - generic [ref=e26]:
+            - img "Premium Wireless Headphones lifestyle shot 1" [ref=e27]
+            - img [ref=e29] [cursor=pointer]
+      - generic [ref=e31]:
+        - generic [ref=e32]:
+          - heading "Smart Fitness Watch" [level=3] [ref=e33]
+          - paragraph [ref=e34]: Track your health and fitness goals
+          - paragraph [ref=e35]: "SKU: DEF456"
+        - generic [ref=e38]:
+          - generic [ref=e39]:
+            - img "Smart Fitness Watch lifestyle shot 2" [ref=e40]
+            - img [ref=e42] [cursor=pointer]
+          - generic [ref=e44]:
+            - img "Smart Fitness Watch lifestyle shot 1" [ref=e45]
+            - img [ref=e47] [cursor=pointer]
+      - generic [ref=e49]:
+        - generic [ref=e50]:
+          - heading "Minimalist Laptop Bag" [level=3] [ref=e51]
+          - paragraph [ref=e52]: Stylish protection for your devices
+          - paragraph [ref=e53]: "SKU: JKL012"
+        - generic [ref=e56]:
+          - generic [ref=e57]:
+            - img "Minimalist Laptop Bag lifestyle shot 2" [ref=e58]
+            - img [ref=e60] [cursor=pointer]
+          - generic [ref=e62]:
+            - img "Minimalist Laptop Bag lifestyle shot 1" [ref=e63]
+            - img [ref=e65] [cursor=pointer]
+    - generic [ref=e67]:
+      - heading "Integration Instructions" [level=2] [ref=e68]
+      - generic [ref=e70]:
+        - heading "Shopify Integration" [level=3] [ref=e71]
+        - paragraph [ref=e72]: To integrate this widget into your Shopify store, follow the instructions in the SHOPIFY_INTEGRATION.md file.
+        - link "View live demo (password required)" [ref=e73] [cursor=pointer]:
+          - /url: https://azgazzola.myshopify.com/
+  - button "Open Next.js Dev Tools" [ref=e79] [cursor=pointer]:
+    - img [ref=e80] [cursor=pointer]
+  - alert [ref=e83]
+```

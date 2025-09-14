@@ -4,13 +4,16 @@
   function getApiBaseUrl() {
     const widgetElement = document.querySelector('[data-lifestyle-widget]');
     if (widgetElement && widgetElement.dataset.apiUrl) {
+      console.log('Using API URL from data attribute:', widgetElement.dataset.apiUrl);
       return widgetElement.dataset.apiUrl;
     }
 
     if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+      console.log('Using localhost API URL');
       return 'http://localhost:3000';
     }
 
+    console.log('Using default production API URL');
     return 'https://shopify-widget.vercel.app';
   }
 
@@ -91,15 +94,28 @@
     if (!container) return;
 
     try {
-      const response = await fetch(`${WIDGET_API_BASE}/api/renders?sku=${sku}`);
+      const apiUrl = `${WIDGET_API_BASE}/api/renders?sku=${sku}`;
+      console.log('Making API request to:', apiUrl);
+      console.log('Using SKU:', sku);
+
+      const response = await fetch(apiUrl);
+
+      console.log('API Response status:', response.status);
+      console.log('API Response ok:', response.ok);
+      console.log('API Response headers:', Object.fromEntries(response.headers.entries()));
 
       if (!response.ok) {
-        throw new Error('Failed to load renders');
+        const errorText = await response.text();
+        console.error('API Error Response:', errorText);
+        throw new Error(`Failed to load renders: ${response.status} ${response.statusText}`);
       }
 
       const renders = await response.json();
+      console.log('API Response data:', renders);
+      console.log('Number of renders received:', renders.length);
 
       if (renders.length === 0) {
+        console.warn('No renders found for SKU:', sku);
         container.innerHTML = '<div class="lifestyle-widget-error">No lifestyle images available</div>';
         return;
       }
@@ -107,7 +123,9 @@
       const grid = document.createElement('div');
       grid.className = 'lifestyle-widget-grid';
 
-      renders.forEach(render => {
+      renders.forEach((render, index) => {
+        console.log(`Processing render ${index + 1}:`, render);
+
         const item = document.createElement('div');
         item.className = 'lifestyle-widget-item';
 
@@ -116,23 +134,20 @@
         img.alt = render.alt_text;
         img.loading = 'lazy';
 
+        console.log(`Loading image: ${render.image_url}`);
+
         const likeButton = document.createElement('div');
         likeButton.className = 'lifestyle-widget-like';
 
         const heart = createHeartIcon(false);
-        const count = document.createElement('span');
-        count.className = 'lifestyle-widget-count';
-        count.textContent = '0';
 
         likeButton.appendChild(heart);
-        likeButton.appendChild(count);
 
         likeButton.addEventListener('click', async () => {
-          const result = await toggleLike(render.id);
+          const result = await toggleLike(render.sku_id);
           if (result) {
-            heart.className = `lifestyle-widget-heart ${result.liked ? 'filled' : 'outline'}`;
-            count.textContent = result.total_likes;
-            await logEvent(render.id, 'like');
+            heart.setAttribute('class', `lifestyle-widget-heart ${result.liked ? 'filled' : 'outline'}`);
+            await logEvent(render.sku_id, 'like');
           }
         });
 
@@ -141,14 +156,22 @@
         grid.appendChild(item);
       });
 
+      console.log('Replacing container content with widget grid');
       container.innerHTML = '';
       container.appendChild(grid);
 
-      await logEvent(renders[0].id, 'view');
+      console.log('Widget successfully loaded with', renders.length, 'renders');
+
+      if (renders.length > 0 && renders[0].sku_id) {
+        console.log('Logging view event for SKU ID:', renders[0].sku_id);
+        await logEvent(renders[0].sku_id, 'view');
+      }
 
     } catch (error) {
-      console.error('Widget error:', error);
-      container.innerHTML = '<div class="lifestyle-widget-error">Failed to load lifestyle images</div>';
+      console.error('Widget error details:', error);
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+      container.innerHTML = `<div class="lifestyle-widget-error">Failed to load lifestyle images: ${error.message}</div>`;
     }
   }
 
